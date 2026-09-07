@@ -1,6 +1,6 @@
 function format --description 'Echo a styled string then reset'
     set __name (string split '.' (basename (status -f)))[1]
-    set __version '1.0.0'
+    set __version $__utils_format_version
     set __description 'Print a styled string then reset'
 
     set opts (fish_opt --short D --long debug)

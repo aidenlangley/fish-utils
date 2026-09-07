@@ -1,5 +1,5 @@
 function mkcd --description 'Create a directory and cd into it'
-    mkdir $argv
+    command mkdir $argv
 
     if test $status = 0
         switch $argv[(count $argv)]

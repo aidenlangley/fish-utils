@@ -1,7 +1,7 @@
-# '['(date --iso-8601=seconds)']:'
-
 function log --description 'Log messages (Levels: ERR, INF, WARN, DEBUG, OK, QUESTION)' \
     --argument-names level
+    # Nice date format if we want to use it.
+    # '['(date --iso-8601=seconds)']:'
     switch $level
         case ERR
             echo (set_color -o red)ERR(set_color --reset) $argv[2..-1]
