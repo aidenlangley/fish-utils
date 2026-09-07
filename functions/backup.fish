@@ -6,18 +6,18 @@ function backup --description 'Quickly create backups of files & directories'
     set opts (fish_opt --short h --long help)
     set opts $opts (fish_opt --short v --long version)
     # Flags
+    set opts $opts (fish_opt --short a --long append --optional-val)
     set opts $opts (fish_opt --short g --long debug)
     set opts $opts (fish_opt --short i --long interactive)
     set opts $opts (fish_opt --short q --long quiet)
     set opts $opts (fish_opt --short V --long verbose)
-    set opts $opts (fish_opt --short a --long append --optional-val)
     # Args.
-    set opts $opts (fish_opt --short D --long mkdir --required-val)
-    set opts $opts (fish_opt --short S --long swap --required-val)
     set opts $opts (fish_opt --short d --long dest --required-val)
+    set opts $opts (fish_opt --short D --long mkdir --required-val)
     set opts $opts (fish_opt --short e --long ext --required-val)
     set opts $opts (fish_opt --short f --long format_datetime --required-val)
     set opts $opts (fish_opt --short s --long suffix --required-val)
+    set opts $opts (fish_opt --short S --long swap --required-val)
 
     argparse $opts -- $argv
 
@@ -67,9 +67,9 @@ function backup --description 'Quickly create backups of files & directories'
         echo $TAB$TAB'Debug output, very verbose.'
         echo $TAB(_option (string join -- $FLAG_DELIM -i --interactive))
         echo $TAB$TAB'Confirm each operation in interactive mode.'
-        echo $TAB(_option (string join -- $FLAG_DELIM --short --suffix)' <STRING>')
+        echo $TAB(_option (string join -- $FLAG_DELIM -s --suffix)' <STRING>')
         echo $TAB$TAB'Backup file suffix (datetime + extension).'
-        echo $TAB(_option (string join -- $FLAG_DELIM --short --swap)' <DIRECTORY>')
+        echo $TAB(_option (string join -- $FLAG_DELIM -S --swap)' <DIRECTORY>')
         echo $TAB$TAB'Leave the backup in place, but move the original to DESTINATION.'
         echo $TAB(_option (string join -- $FLAG_DELIM -v --version))
         echo $TAB$TAB'Print name & version.'
@@ -85,10 +85,9 @@ function backup --description 'Quickly create backups of files & directories'
         _flag_i _flag_f _flag_s _flag_S _flag_v _flag_V
 
     set --query _flag_i && set interactive $_flag_i
-    set --query _flag_v && set verbose $_flag_V
+    set --query _flag_V && set verbose $_flag_V
     set --query _flag_q && set quiet $_flag_q
-    set --query debug && set --show debug interactive verbose quiet \
-        && echo
+    set --query debug && set --show debug interactive verbose quiet
 
     # Defaults
     set default_datetime_format '_%Y%m%d_%H:%M:%S.%N'
@@ -102,69 +101,53 @@ function backup --description 'Quickly create backups of files & directories'
     set --query _flag_e && set ext $_flag_e \
         || set ext $default_ext
 
-    set --query debug && set --short datetime_format ext
-
-    set msg
-    set ok (set_color -o green)OK(set_color --reset)
-    set err (set_color -o red)ERR(set_color --reset)
-    set info (set_color -od white)INF(set_color --reset)
-    set question (set_color -o cyan)'???'(set_color --reset)
-    set --query debug && set --show msg ok err info question
+    set --query debug && set --show datetime_format ext
 
     for arg in $argv
-        set timestamp (printf '%s' (date +'%H:%M:%S.%N'))
-        set --query debug && set --short timestamp
-        set timestamp (set_color -d)"[$timestamp]"(set_color --reset)
 
         if set --query verbose && set --query interactive
-            # set msg $info (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
-            log INF (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
-            echo $timestamp (string join ' ' $msg) && set msg
+            log --timestamp --level INF (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
         end
 
         if set --query verbose
-            set msg $info "Beginning backup of" (set_color -o yellow)$arg(set_color --reset)
-            echo $timestamp (string join ' ' $msg) && set msg
+            log --timestamp --level INF "Beginning backup of" (set_color -o yellow)$arg(set_color --reset)
         end
 
         # Test if $arg is a FILE or DIRECTORY - this is what we're backing up, so it 
         # must exist.
         if not test -e $arg
-            set msg $err "$arg does not exist"
-            echo $timestamp (string join \t $msg) \
-                && notify-send "Backup $arg" $msg[2] -c "transfer.error"
+            log --timestamp --level ERR "$arg does not exist"
+            notify-send "Backup $arg" $msg[2] -c "transfer.error"
             return 1
         end
 
         if set --query verbose
-            set msg $info 'Found '(set_color -o yellow)$arg(set_color --reset)', backup can proceed'
-            echo $timestamp (string join ' ' $msg) && set msg
+            log --timestamp --level INF 'Found '(set_color -o yellow)$arg(set_color --reset)', backup can proceed'
         end
 
         # If user has specified -d/--dest, or -D/--mkdir, we'll take the final part of $arg (the path),
         # and append it to the path provided by the user. -D/--mkdir takes priority. Both options provide
         # a destination directory, but -D/--mkdir gives us permission to create the directory also, so 
         # we don't want to check them both. We want to action -D/--mkdir first.
-        if set -qf _flag_D
+        if set --query _flag_D
             set mkdir $_flag_D
             set dest $_flag_D
-            set --query verbose && set msg $info(set_color -o)' -D/--mkdir'(set_color --reset)
+            set --query verbose && log --timestamp --level INF (set_color -o)' -D/--mkdir'(set_color --reset)
         else if set -qf _flag_d
             set dest $_flag_d
-            set --query verbose && set msg $info(set_color -o)' -d/--dest'(set_color --reset)
+            set --query verbose && log --timestamp --level INF (set_color -o)' -d/--dest'(set_color --reset)
         end
         set --query debug && set --show dest
 
         if set --query verbose && set --query dest
-            set -a msg "is set, so we'll archive "(set_color -o yellow)$arg(set_color --reset)' to '(set_color -o)"$dest/"(set_color --reset)
-            echo $timestamp (string join ' ' $msg) && set msg
+            log --timestamp --level INF "-d/--dest is set, so we'll archive "(set_color -o yellow)$arg(set_color --reset)' to '(set_color -o)"$dest/"(set_color --reset)
         end
 
-        # If we're interactive and haven't defined dest, we'll ask the user if they want the default, or
-        # another backup directory.
+        # If we're interactive and haven't defined dest, we'll ask the user if they want the default,
+        # or another backup directory.
         if set --query interactive && not set --query dest
             while true
-                read -P "$timestamp $question Choose a destination directory [Default: "(set_color -o magenta)"$PWD/"(set_color --reset)' (Enter)] ' dest
+                read --prompt-str (log --timestamp --level QUESTION "Choose a destination directory [Default: "(set_color -o magenta)"$PWD/"(set_color --reset)' (Enter)] ') dest
                 switch $dest
                     case ''
                         set dest $PWD
@@ -175,28 +158,26 @@ function backup --description 'Quickly create backups of files & directories'
             end
 
             if set --query verbose
-                set msg $info 'Destination directory set: '(set_color -o)"$dest/"(set_color --reset)
-                echo $timestamp (string join ' ' $msg) && set msg
+                log --timestamp --level INF 'Destination directory set: '(set_color -o)"$dest/"(set_color --reset)
             end
         end
 
         # The backup destination must be a directory, or not exist.
         if set --query dest && test -e $dest && not test -d $dest
-            set msg $err "Backup location must be a directory, but $dest is a file. We won't be able to create a backup directory there."
-            echo $timestamp (string join \t $msg) \
-                && notify-send "Backup $arg" $msg[2] -c "transfer.error"
+            log --timestamp --level ERR "Backup location must be a directory, but $dest is a file. We won't be able to create a backup directory there."
+            notify-send "Backup $arg" $msg[2] -c "transfer.error"
             return 1
         end
 
-        set -qf _flag_a && set date_dest $_flag_a
+        set --query _flag_a && set date_dest $_flag_a
         set --query debug && set --show date_dest
 
         set dest_with_date "$dest"(printf "$dest_%s" (date +'_%Y%m%d'))
         set --query debug && set --show dest_with_date
 
         # Ask interactive users if they want the date on the end of their backup directory.
-        if set --query interactive && not set -qf date_dest
-            if read_confirm "$timestamp $question Append date to destination directory? "(set_color -o magenta)$dest_with_date(set_color --reset)
+        if set --query interactive && not set --query date_dest
+            if user_confirm (log --timestamp --level QUESTION "Append date to destination directory? "(set_color -o magenta)$dest_with_date(set_color --reset))
                 set date_dest $_flag_a
                 set --query debug && set --show date_dest
             end
@@ -207,8 +188,7 @@ function backup --description 'Quickly create backups of files & directories'
             set dest $dest_with_date
 
             if set --query verbose
-                set msg $info 'Destination directory updated: '(set_color -o)"$dest/"(set_color --reset)
-                echo $timestamp (string join ' ' $msg) && set msg
+                log --timestamp --level INF 'Destination directory updated: '(set_color -o)"$dest/"(set_color --reset)
             end
         end
 
@@ -216,24 +196,22 @@ function backup --description 'Quickly create backups of files & directories'
         if not test -d $dest
             # If we're interactive, ask the user before we create the directory.
             if set --query interactive
-                read_confirm -y \
-                    "$timestamp $question Create backup directory? "(set_color -o magenta)"$dest/"(set_color --reset) \
+                user_confirm --yes \
+                    (log --timestamp --level QUESTION "Create backup directory? "(set_color -o magenta)"$dest/"(set_color --reset)) \
                     || return 1
             end
 
-            if set --query dest && not set -qf mkdir
-                set msg $err" -d/--dest is set, but the directory ("$dest") doesn't exist. Pass -D/--mkdir to create it."
-                echo $timestamp (string join ' ' $msg) \
-                    && notify-send "Backup $arg" $msg[2] -c "transfer.error"
+            if set --query dest && not set --query mkdir
+                log --timestamp --level ERR "-d/--dest is set, but the directory ("$dest") doesn't exist. Pass -D/--mkdir to create it."
+                notify-send "Backup $arg" $msg[2] -c "transfer.error"
                 return 1
             end
 
             # Proceed to creating the directory.
             if set --query dest && set --query mkdir && not set made_dir (mkdir --parents $dest)
                 # Destination is set, but we couldn't create the directory. Probably permission issue.
-                set msg $err 'Could not make directory: '$dest'. Do you have permission to create this directory?'
-                echo $timestamp (string join ' ' $msg) \
-                    && notify-send "Backup $arg" $msg[2] -c "transfer.error"
+                log --timestamp --level ERR 'Could not make directory: '$dest'. Do you have permission to create this directory?'
+                notify-send "Backup $arg" $msg[2] -c "transfer.error"
                 return 1
             end
         end
@@ -258,14 +236,14 @@ function backup --description 'Quickly create backups of files & directories'
         set --query dest && set new_fname "$dest/"(basename $arg)"$suffix"
 
         set cp_args $arg $new_fname
-        set --query debug && set --short cp_args
+        set --query debug && set --show cp_args
 
         # If $arg is a directory, we need to add -r/--recursive flag.
         test -d $arg && set -p cp_args -r
 
         # If we're interactive, ask the user before we backup this file/dir.
         if set --query interactive
-            read_confirm "$timestamp $question Create backup? "(set_color -o yellow)$new_fname(set_color --reset) \
+            user_confirm --yes (log --timestamp --level QUESTION "Create backup? "(set_color -o yellow)$new_fname(set_color --reset)) \
                 || return 1
         end
 
@@ -274,16 +252,14 @@ function backup --description 'Quickly create backups of files & directories'
 
         # It failed. :(
         if test $status -ne 0
-            set msg $err $arg' -> '$new_fname
-            echo $timestamp (string join ' ' $msg) \
-                && notify-send "Backup $arg" $msg[2] -c "transfer.error"
-            exit
+            log --timestamp --level ERR $arg' -> '$new_fname
+            notify-send "Backup $arg" $msg[2] -c "transfer.error"
+            return 1
         end
 
         if not set --query quiet
-            set msg "$ok  Backup complete! "(set_color -o yellow)$arg(set_color --reset)' -> '(set_color -o)$new_fname(set_color --reset)
-            echo $timestamp (string join ' ' $msg) \
-                && notify-send "Backup $arg" "Created backup @ $msg[2]" -c "transfer.complete"
+            log --timestamp --level OK "Backup complete! "(set_color -o yellow)$arg(set_color --reset)' -> '(set_color -o)$new_fname(set_color --reset)
+            notify-send "Backup $arg" "Created backup @ $msg[2]" -c "transfer.complete"
         end
     end
 end
