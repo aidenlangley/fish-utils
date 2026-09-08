@@ -9,36 +9,51 @@ set --global __utils_backup_version 1.0.0
 
 abbr --add !! --position anywhere --function last_history_item
 
-abbr --add j journalctl
-abbr --add jf 'journalctl --no-hostname --no-full --quiet --pager-end --follow\
+if command -v systemctl &>/dev/null
+    abbr --add j journalctl
+    abbr --add jf 'journalctl --no-hostname --no-full --quiet --pager-end --follow\
   --exclude-identifier="uwsm_hyprland.desktop"'
+end
 
-abbr --add s systemctl
-abbr --command systemctl u -- --user
-abbr --command systemctl r -- --restart
-abbr --command systemctl e -- --enable
-abbr --command systemctl n -- --now
+if command -v systemctl &>/dev/null
+    abbr --add s systemctl
+    abbr --command systemctl u -- --user
+    abbr --command systemctl r -- --restart
+    abbr --command systemctl e -- --enable
+    abbr --command systemctl n -- --now
+end
 
-abbr --add nv nvim
-abbr --add lazyvim 'NVIM_APPNAME=lvim nvim' # The default lazyvim experience.
-abbr --add lvim lazyvim
-abbr --add lv lvim
-abbr --add nevim 'NVIM_APPNAME=nevim nvim' # My attempt to use default package manager.
-abbr --add nev nevim
+if command -v nvim &>/dev/null
+    abbr --add nv nvim
+    abbr --add lazyvim 'NVIM_APPNAME=lvim nvim' # The default lazyvim experience.
+    abbr --add lvim lazyvim
+    abbr --add lv lvim
+    abbr --add nevim 'NVIM_APPNAME=nevim nvim' # My attempt to use default package manager.
+    abbr --add nev nevim
+end
 
-abbr --add ld lazydocker
-abbr --add lg lazygit
+command -v lazydocker &>/dev/null && abbr --add ld lazydocker
+command -v lazygit &>/dev/null && abbr --add lg lazygit
+command -v python &>/dev/null && abbr --add py python
+command -v bat &>/dev/null && abbr --add b --position anywhere '| bat'
 
-abbr --add py python
+if command -v less &>/dev/null
+    abbr --add l --position anywhere '| less'
+    abbr --add L --position anywhere --set-cursor '% | less'
+end
 
-abbr --add b --position anywhere '| bat'
-abbr --add l --position anywhere '| less'
-abbr --add L --position anywhere --set-cursor '% | less'
+if command -v grip &>/dev/null
+    set grep_cmd grep
+else if command -v rg &>/dev/null
+    set grep_cmd rg
+end
 
-abbr --add rg --position anywhere '| rg'
-abbr --add !rg --position anywhere '| rg -line-buffered -v'
-abbr --add Rg --position anywhere --set-cursor "| rg '%'"
-abbr --add !Rg --position anywhere --set-cursor "| rg --line-buffered -v '%'"
+if set --query grep_cmd
+    abbr --add rg --position anywhere "| $grep_cmd"
+    abbr --add !rg --position anywhere "| $grep_cmd -line-buffered -v"
+    abbr --add Rg --position anywhere --set-cursor "| $grep_cmd '%'"
+    abbr --add !Rg --position anywhere --set-cursor "| $grep_cmd --line-buffered -v '%'"
+end
 
 function _utils_uninstall --on-event utils_uninstall
     set --erase __utils_version
