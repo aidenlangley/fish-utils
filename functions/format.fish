@@ -40,12 +40,13 @@ function format --description 'Echo a styled string then reset'
         echo
         echo (set_color --bold green)'Usage:'(set_color --reset)
         echo $TAB(_usage '[OPTIONS] [COLOR] ...')
-        echo $TAB(_usage 'red ...') (_desc 'Print red text.')
+        echo $TAB(_usage '-c red ...') (_desc 'Print red text.')
         echo $TAB(_usage '-d/--dim brwhite ...') (_desc 'Print dim white text.')
         echo $TAB(_usage '-i/--italic ...') (_desc 'Print italic text.')
         echo $TAB(_usage '-o/--bold cyan ...') (_desc 'Print bold cyan text.')
         echo $TAB(_usage '-u/--underline red ...') (_desc 'Print underlined red text.')
         echo $TAB(_usage '-b/--background white -f/--foreground black ...') (_desc 'Print black text on white background.')
+        echo $TAB(_usage '-oi ...') (_desc 'Print bold, dim text.')
 
         echo
         echo (set_color --bold green)'Options:'(set_color --reset)
