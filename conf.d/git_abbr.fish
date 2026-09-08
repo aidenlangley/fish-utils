@@ -441,8 +441,8 @@ function _uninstall_git_stash --description 'Uninstall git stash abbreviations'
     abbr --command git --erase stl
     abbr --command git --erase stshow
 
-    abbr --erase --add git_stash_pop
-    abbr --erase --add git_stash_push
+    abbr --erase git_stash_pop
+    abbr --erase git_stash_push
 end
 
 function _install_git_switch --description 'Configure git switch abbreviations'
@@ -610,6 +610,6 @@ function _git_abbr_uninstall --on-event git_abbr_uninstall
     abbr --command git --erase su
     abbr --command git --erase wch
 
-    abbr --erase --add gk
-    abbr --erase --add gke
+    abbr --erase gk
+    abbr --erase gke
 end
