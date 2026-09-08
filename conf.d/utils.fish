@@ -49,10 +49,10 @@ else if command -v rg &>/dev/null
 end
 
 if set --query grep_cmd
-    abbr --add rg --position anywhere "| $grep_cmd"
-    abbr --add !rg --position anywhere "| $grep_cmd -line-buffered -v"
-    abbr --add Rg --position anywhere --set-cursor "| $grep_cmd '%'"
-    abbr --add !Rg --position anywhere --set-cursor "| $grep_cmd --line-buffered -v '%'"
+    abbr --add G --position anywhere "| $grep_cmd"
+    abbr --add !G --position anywhere "| $grep_cmd -line-buffered -v"
+    abbr --add RG --position anywhere --set-cursor "| $grep_cmd '%'"
+    abbr --add !RG --position anywhere --set-cursor "| $grep_cmd --line-buffered -v '%'"
 end
 
 function _utils_uninstall --on-event utils_uninstall
