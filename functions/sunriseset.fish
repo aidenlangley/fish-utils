@@ -39,7 +39,7 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
 
                 # No config, no go.
                 log --level ERR 'Config not found, need -t/--latitude and -g/--longitude'
-                exit 1
+                return 1
             end
         end
 
@@ -49,12 +49,12 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
 
         if not set --query _flag_t
             log --level ERR 'Missing -t/--latitude'
-            exit 1
+            return 1
         end
 
         if not set --query _flag_g
             log --level ERR 'Missing -g/--longitude'
-            exit 1
+            return 1
         end
     end
 
@@ -63,12 +63,12 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
 
     if not is_number $lat
         log --level ERR "$lat is not a number/float"
-        exit 1
+        return 1
     end
 
     if not is_number $lng
         log --level ERR "$lng is not a number/float"
-        exit 1
+        return 1
     end
 
     set cache_file "$XDG_CACHE_HOME/sunriseset"
@@ -91,5 +91,4 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
     set sunset $data[2]
 
     echo "$sunrise $sunset"
-    exit 0
 end
