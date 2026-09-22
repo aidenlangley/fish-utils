@@ -61,12 +61,12 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
     set lat $_flag_t
     set lng $_flag_g
 
-    if not _is_number $lat
+    if not is_number $lat
         log --level ERR "$lat is not a number/float"
         exit 1
     end
 
-    if not _is_number $lng
+    if not is_number $lng
         log --level ERR "$lng is not a number/float"
         exit 1
     end
