@@ -10,6 +10,7 @@ A collection of utilities for the fish shell.
 - log `log DEBUG (echo $argv)`
 - mkcd `mkcd new_dir # cd into directory after creation`
 - user_confirm `user_confirm Proceed?`
+- is_number `is_number 3.14 # true`
 
 ## Abbreviations
 
