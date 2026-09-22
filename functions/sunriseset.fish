@@ -1,19 +1,6 @@
-function _fetch --description 'Get sunrise and sunset from API' --argument-names lat lng
-    set BASE_URL 'https://api.sunrise-sunset.org/v2'
-    set req "$BASE_URL?lat=$lat&lng=$lng"
-    set resp (curl -s $req)
-
-    set data (echo $resp | jq '.sunrise,.sunset' | string replace --all '"' '')
-
-    set sunrise (string sub --start=12 --end=16 $data[1])
-    set sunset (string sub --start=12 --end=16 $data[2])
-
-    echo $sunrise $sunset
-end
-
 function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunset.org'
     set __name (string split '.' (basename (status -f)))[1]
-    set __version '0.1.0'
+    set __version $__utils_version
     set __description 'Get sunrise and sunset from api.sunrise-sunset.org'
 
     set opts (fish_opt --short h --long help)
@@ -23,7 +10,50 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
     argparse $opts -- $argv
 
     # Print help.
-    if set --query _flag_h || not argparse --min-args=1 -- $argv &>/dev/null
+    if set --query _flag_h
+        set TAB '  '
+        set FLAG_DELIM ', '
+        set FIND_MY_GPS_COORDS 'https://findmycoordinates.com/find-coordinates'
+        set DEFAULT_CONFIG "$XDG_CONFIG_HOME/sunriseset/config"
+
+        set name (set_color --bold green)$__name(set_color --reset)
+        set desc (set_color --italic)$__description(set_color --reset)
+        echo (printf '%s %s - %s.' $name $__version $desc)
+
+        function _usage --inherit-variable __name --argument-names args
+            echo (set_color --bold cyan)$__name(set_color --reset) $args
+        end
+
+        function _desc --argument-names desc
+            echo (set_color --dim brwhite)$desc(set_color --reset)
+        end
+
+        function _option --argument-names args
+            echo (set_color --bold cyan)$args(set_color --reset)
+        end
+
+        echo
+        echo (set_color --bold green)'Usage:'(set_color --reset)
+        echo $TAB(_usage '[OPTIONS] [ARGS]...')
+        echo $TAB(_usage 'r/rise/sunrise|s/set/sunset')
+        echo $TAB$TAB (_desc "Get the sunrise or sunset for the co-ordinates from config ($DEFAULT_CONFIG).")
+        # echo $TAB(_usage '-t/--latitude -3.14 -g/--longitude 3.14 c/conf/config')
+        # echo $TAB$TAB (_desc "Save latitude and longitude to config ($DEFAULT_CONFIG).")
+        echo $TAB(_usage '-t/--latitude -3.14 -g/--longitude 3.14')
+        echo $TAB$TAB (_desc 'Get the sunset and sunrise times for the given co-ordinates.')
+        echo $TAB(_usage '-t/--latitude -3.14 -g/--longitude 3.14 r/rise/sunrise')
+        echo $TAB$TAB (_desc 'Get the sunrise only for the given co-ordinates.')
+        echo $TAB(_usage '-t/--latitude -3.14 -g/--longitude 3.14 s/set/sunset')
+        echo $TAB$TAB (_desc 'Get the sunset only for the given co-ordinates.')
+
+        echo
+        echo (set_color --bold green)'Options:'(set_color --reset)
+        echo $TAB(_option (string join -- $FLAG_DELIM -t --latitude)' <LATITUDE>')
+        echo $TAB$TAB"Your latitude. Find yours here: $FIND_MY_GPS_COORDS"
+        echo $TAB(_option (string join -- $FLAG_DELIM -g --longitude)' <LONGITUDE>')
+        echo $TAB$TAB"Your longitude. Find yours here: $FIND_MY_GPS_COORDS"
+
+        return
     end
 
     # Check if we have been given -t/--latitude & -g/-longitude
@@ -87,8 +117,32 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
         echo $data >$cache_file
     end
 
+    set data (string split ' ' $data)
     set sunrise $data[1]
     set sunset $data[2]
 
-    echo "$sunrise $sunset"
+    if argparse --min-args=1 -- $argv &>/dev/null
+        switch $argv[1]
+            case r rise sunrise
+                echo $sunrise
+            case s set sunset
+                echo $sunset
+        end
+    else
+        echo "$sunrise $sunset"
+    end
+
+end
+function _fetch --description 'Get sunrise and sunset from API' --argument-names lat lng
+    set BASE_URL 'https://api.sunrise-sunset.org/v2'
+
+    set req "$BASE_URL?lat=$lat&lng=$lng"
+    set resp (curl -s $req)
+
+    set data (echo $resp | jq '.sunrise,.sunset' | string replace --all '"' '')
+
+    set sunrise (string sub --start=12 --end=16 $data[1])
+    set sunset (string sub --start=12 --end=16 $data[2])
+
+    echo $sunrise $sunset
 end

@@ -1,6 +1,6 @@
 function backup --description 'Quickly create backups of files & directories'
     set __name (string split '.' (basename (status -f)))[1]
-    set __version $__utils_backup_version
+    set __version $__utils_version
     set __description 'Quickly create backups of files & directories'
 
     set opts (fish_opt --short h --long help)
@@ -104,7 +104,6 @@ function backup --description 'Quickly create backups of files & directories'
     set --query debug && set --show datetime_format ext
 
     for arg in $argv
-
         if set --query verbose && set --query interactive
             log --timestamp --level INF (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
         end

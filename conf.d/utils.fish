@@ -3,9 +3,7 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __utils_version 1.0.0
-set --global __utils_format_version 1.0.0
-set --global __utils_backup_version 1.0.0
+set --global __utils_version 0.2.0
 
 abbr --add !! --position anywhere --function last_history_item
 
