@@ -36,4 +36,5 @@ function log --description 'Log messages (Levels: ERR, INF, WARN, DEBUG, OK, QUE
     end
 
     echo $msg
+    echo
 end
