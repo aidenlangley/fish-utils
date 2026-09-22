@@ -21,15 +21,6 @@ if command -v systemctl &>/dev/null
     abbr --command systemctl n -- --now
 end
 
-if command -v nvim &>/dev/null
-    abbr --add nv nvim
-    abbr --add lazyvim 'NVIM_APPNAME=lvim nvim' # The default lazyvim experience.
-    abbr --add lvim lazyvim
-    abbr --add lv lvim
-    abbr --add nevim 'NVIM_APPNAME=nevim nvim' # My attempt to use default package manager.
-    abbr --add nev nevim
-end
-
 command -v lazydocker &>/dev/null && abbr --add ld lazydocker
 command -v lazygit &>/dev/null && abbr --add lg lazygit
 command -v python &>/dev/null && abbr --add py python
