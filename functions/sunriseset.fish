@@ -106,7 +106,7 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
     if test -e $cache_file
         set data (cat $cache_file)
 
-        if test (stat -c "%Y" $cache_file) -gt 86400
+        if test (math (date +'%s') - (stat -c '%Y' $cache_file)) -gt 86400
             # If cache is more than a day old, get fresh data + overwrite the cache.
             set data (_fetch $lat $lng)
             echo $data >$cache_file
@@ -131,8 +131,8 @@ function sunriseset --description 'Get sunrise and sunset from api.sunrise-sunse
     else
         echo "$sunrise $sunset"
     end
-
 end
+
 function _fetch --description 'Get sunrise and sunset from API' --argument-names lat lng
     set BASE_URL 'https://api.sunrise-sunset.org/v2'
 
