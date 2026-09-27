@@ -67,6 +67,8 @@ function backup --description 'Quickly create backups of files & directories'
         echo $TAB$TAB'Debug output, very verbose.'
         echo $TAB(_option (string join -- $FLAG_DELIM -i --interactive))
         echo $TAB$TAB'Confirm each operation in interactive mode.'
+        echo $TAB(_option (string join -- $FLAG_DELIM -q --quiet)' <STRING>')
+        echo $TAB$TAB'Disable logging, run quietly (still logs to journal).'
         echo $TAB(_option (string join -- $FLAG_DELIM -s --suffix)' <STRING>')
         echo $TAB$TAB'Backup file suffix (datetime + extension).'
         echo $TAB(_option (string join -- $FLAG_DELIM -S --swap)' <DIRECTORY>')
@@ -116,7 +118,6 @@ function backup --description 'Quickly create backups of files & directories'
         # must exist.
         if not test -e $arg
             log --timestamp --level ERR "$arg does not exist"
-            notify-send "Backup $arg" $msg[2] -c "transfer.error"
             return 1
         end
 
@@ -164,7 +165,6 @@ function backup --description 'Quickly create backups of files & directories'
         # The backup destination must be a directory, or not exist.
         if set --query dest && test -e $dest && not test -d $dest
             log --timestamp --level ERR "Backup location must be a directory, but $dest is a file. We won't be able to create a backup directory there."
-            notify-send "Backup $arg" $msg[2] -c "transfer.error"
             return 1
         end
 
@@ -202,7 +202,6 @@ function backup --description 'Quickly create backups of files & directories'
 
             if set --query dest && not set --query mkdir
                 log --timestamp --level ERR "-d/--dest is set, but the directory ("$dest") doesn't exist. Pass -D/--mkdir to create it."
-                notify-send "Backup $arg" $msg[2] -c "transfer.error"
                 return 1
             end
 
@@ -210,7 +209,6 @@ function backup --description 'Quickly create backups of files & directories'
             if set --query dest && set --query mkdir && not set made_dir (mkdir --parents $dest)
                 # Destination is set, but we couldn't create the directory. Probably permission issue.
                 log --timestamp --level ERR 'Could not make directory: '$dest'. Do you have permission to create this directory?'
-                notify-send "Backup $arg" $msg[2] -c "transfer.error"
                 return 1
             end
         end
@@ -252,13 +250,11 @@ function backup --description 'Quickly create backups of files & directories'
         # It failed. :(
         if test $status -ne 0
             log --timestamp --level ERR $arg' -> '$new_fname
-            notify-send "Backup $arg" $msg[2] -c "transfer.error"
             return 1
         end
 
         if not set --query quiet
             log --timestamp --level OK "Backup complete! "(set_color -o yellow)$arg(set_color --reset)' -> '(set_color -o)$new_fname(set_color --reset)
-            notify-send "Backup $arg" "Created backup @ $msg[2]" -c "transfer.complete"
         end
     end
 end
