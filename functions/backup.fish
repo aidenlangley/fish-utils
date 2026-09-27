@@ -63,7 +63,7 @@ function backup --description 'Quickly create backups of files & directories'
         echo $TAB$TAB'File extension. Default: bak.'
         echo $TAB(_option (string join -- $FLAG_DELIM -f --format_datetime)' <FORMAT>')
         echo $TAB$TAB"Date time format to use in the backup file name. Default: $default_datetime_format."
-        echo $TAB(_option (string join -- $FLAG_DELIM --debug))
+        echo $TAB(_option (string join -- $FLAG_DELIM -g --debug))
         echo $TAB$TAB'Debug output, very verbose.'
         echo $TAB(_option (string join -- $FLAG_DELIM -i --interactive))
         echo $TAB$TAB'Confirm each operation in interactive mode.'
