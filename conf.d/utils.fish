@@ -9,8 +9,7 @@ abbr --add !! --position anywhere --function last_history_item
 
 if command -v systemctl &>/dev/null
     abbr --add j journalctl
-    abbr --add jf 'journalctl --no-hostname --no-full --quiet --pager-end --follow\
-  --exclude-identifier="uwsm_hyprland.desktop"'
+    abbr --add jf 'journalctl --output="short-precise" --no-hostname --quiet --pager-end --follow'
 end
 
 if command -v systemctl &>/dev/null
