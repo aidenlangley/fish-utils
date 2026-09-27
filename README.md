@@ -19,5 +19,5 @@ A collection of utilities for the fish shell.
 ## Installing
 
 ```fish
-fisher install aidenlangley/fishutils
+fisher install aidenlangley/fish-utils
 ```
