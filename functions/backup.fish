@@ -1,6 +1,6 @@
 function backup --description 'Quickly create backups of files & directories'
     set __name (string split '.' (basename (status -f)))[1]
-    set __version $__utils_version
+    set __version $__fish_utils_version
     set __description 'Quickly create backups of files & directories'
 
     set opts (fish_opt --short h --long help)
