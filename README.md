@@ -32,11 +32,9 @@ fisher install aidenlangley/fish-utils
 ## Functions
 
 - backup
+- sunriseset
 - format
 - log
-- sunriseset
-- last_history_item
-- mkcd
 - is_number
 - user_confirm
 
