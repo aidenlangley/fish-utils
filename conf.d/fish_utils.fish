@@ -3,7 +3,7 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __fish_utils_version '1.0.0'
+set --global __fish_utils_version '1.0.1'
 
 abbr --erase jf
 abbr --add jf 'journalctl --output="short-precise" --no-hostname --quiet \

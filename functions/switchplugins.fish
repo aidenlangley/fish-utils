@@ -1,4 +1,4 @@
-if not functions --quiet fisher
+if not functions -q fisher
     exit
 end
 
