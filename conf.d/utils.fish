@@ -3,7 +3,7 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __utils_version 0.2.0
+set --global __fish-utils_version 0.2.0
 
 abbr --add !! --position anywhere --function last_history_item
 
@@ -15,8 +15,10 @@ end
 if command -v systemctl &>/dev/null
     abbr --add s systemctl
     abbr --command systemctl u -- --user
-    abbr --command systemctl r -- --restart
     abbr --command systemctl e -- --enable
+    abbr --command systemctl d -- --disable
+    abbr --command systemctl r -- --restart
+    abbr --command systemctl s -- --status
     abbr --command systemctl n -- --now
 end
 
@@ -90,6 +92,5 @@ function _utils_uninstall --on-event utils_uninstall
     complete --erase backup
     complete --erase format
 
-    emit git_abbr_uninstall
     emit datetime_abbr_uninstall
 end
