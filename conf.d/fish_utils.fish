@@ -125,12 +125,6 @@ function _fish_utils_uninstall --on-event fish_utils_uninstall
     abbr --erase !G
     abbr --erase !gr
 
-    functions --erase is_number
-    functions --erase last_history_item
-    functions --erase mkcd
-    functions --erase switchplugins
-    functions --erase user_confirm
-
     abbr --erase !!
 
     # abbr --erase day
