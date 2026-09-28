@@ -23,7 +23,7 @@ abbr --command systemctl u -- --user
 
 if has nvim
     abbr --add nv nvim
-    alias lvim=lazyvim 'NVIM_APPNAME=lvim nvim'
+    alias lvim='NVIM_APPNAME=lvim nvim'
     abbr --add lv lvim
 end
 
