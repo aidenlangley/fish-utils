@@ -10,23 +10,31 @@ abbr --add jf 'journalctl --output="short-precise" --no-hostname --quiet \
   --pager-end --follow --exclude-identifier="uwsm_hyprland.desktop"'
 
 abbr --add s systemctl
-abbr --command systemctl u -- --user
-abbr --command systemctl e -- --enable
 abbr --command systemctl d -- --disable
-abbr --command systemctl r -- --restart
-abbr --command systemctl s -- --status
+abbr --command systemctl e -- --enable
 abbr --command systemctl n -- --now
+abbr --command systemctl r -- --restart
+abbr --command systemctl s -- status
+abbr --command systemctl u -- --user
 
 if command -v nvim &>/dev/null
     abbr --add nv nvim
+    abbr --add lazyvim 'NVIM_APPNAME=lvim nvim'
+    abbr --add lvim lazyvim
+    abbr --add lv lvim
     # abbr --add nevim 'NVIM_APPNAME=nevim nvim'
-    # abbr --add lazyvim 'NVIM_APPNAME=lvim nvim'
 end
 
 command -v lazydocker &>/dev/null && abbr --add ld lazydocker
 command -v lazygit &>/dev/null && abbr --add lg lazygit
 command -v python &>/dev/null && abbr --add py python
-command -v bat &>/dev/null && abbr --add b --position anywhere '| bat'
+
+if command -v bat &>/dev/null
+    abbr --add b bat
+    abbr --add ca bat
+    abbr --add ba --position anywhere '| bat'
+    abbr --add ca --position anywhere '| bat'
+end
 
 abbr --add l --position anywhere '| less'
 
@@ -109,7 +117,9 @@ function _fish_utils_uninstall --on-event fish_utils_uninstall
     abbr --command systemctl --erase u
 
     abbr --erase nvim
-    # abbr --erase lazyvim
+    abbr --erase lazyvim
+    abbr --erase lvim
+    abbr --erase lv
     # abbr --erase nevim
 
     abbr --erase ld
@@ -118,6 +128,10 @@ function _fish_utils_uninstall --on-event fish_utils_uninstall
     abbr --erase py
 
     abbr --erase b
+    abbr --erasa ca
+    abbr --erasa ba
+    abbr --erasa ca
+
     abbr --erase l
 
     abbr --erase G
