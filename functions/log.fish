@@ -19,14 +19,14 @@ function log --description 'Log messages (Levels: ERR, INF, WARN, DEBUG, OK, QUE
 
     set --query _flag_l && set level $_flag_l
     switch $level
-        case err error ERR ERROR
-            set msg $msg (set_color -o red)ERR(set_color --reset) $argv
+        case dbg debug DBG DEBUG
+            set msg $msg (set_color -o cyan)DBG(set_color --reset) $argv
         case inf info INF INFO
             set msg $msg (set_color --bold --dim white)INF(set_color --reset) $argv
         case wrn warn WRN WARN
             set msg $msg (set_color -o yellow)WARN(set_color --reset) $argv
-        case dbg debug DBG DEBUG
-            set msg $msg (set_color -o cyan)DBG(set_color --reset) $argv
+        case err error ERR ERROR
+            set msg $msg (set_color -o red)ERR(set_color --reset) $argv
         case ok OK
             set msg $msg (set_color -o green)OK(set_color --reset) $argv
         case question QUESTION
