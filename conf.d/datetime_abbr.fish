@@ -3,8 +3,6 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __datetime_abbr_version 1.0.0
-
 abbr --add day --position anywhere 'date +\'%d\''
 abbr --add weekday --position anywhere 'date +\'%A\''
 abbr --add weekdayshort --position anywhere 'date +\'%a\''
