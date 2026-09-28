@@ -6,8 +6,8 @@ function switchplugins --description 'Swap our remote plugins for local plugins\
   for testing, and vice versa.'
     for plugin in (fisher list)
         set plugin_name (string split '/' $plugin)[-1]
-        set remote_plugin "aidenlangley/$plugin_name"
-        set local_plugin "$HOME/Projects/fish/$plugin_name"
+        set --global remote_plugin "aidenlangley/$plugin_name"
+        set --global local_plugin "$HOME/Projects/fish/$plugin_name"
 
         # We're only interested in plugins we can test locally, so they must
         # exist @ $local_plugin.
@@ -29,7 +29,7 @@ function switchplugins --description 'Swap our remote plugins for local plugins\
                     _install_local
                 case remote
                     _install_remote
-                case *
+                case ''
                     if string match aidenlangley $plugin
                         _install_local
                     else
