@@ -3,7 +3,7 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __fish-utils_version 0.2.0
+set --global __fish_utils_version 0.2.0
 
 abbr --add !! --position anywhere --function last_history_item
 
