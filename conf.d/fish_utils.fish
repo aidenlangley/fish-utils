@@ -5,6 +5,10 @@ end
 
 set --global __fish_utils_version '1.0.4'
 
+function has --description 'Check if system has this command, builtin or function'
+    command -sq $argv || builtin -q $argv || functions -q $argv
+end
+
 abbr --erase jf
 abbr --add jf 'journalctl --output="short-precise" --no-hostname --quiet \
   --pager-end --follow --exclude-identifier="uwsm_hyprland.desktop"'
@@ -17,7 +21,7 @@ abbr --command systemctl r -- --restart
 abbr --command systemctl s -- status
 abbr --command systemctl u -- --user
 
-if command -v nvim &>/dev/null
+if has nvim
     abbr --add nv nvim
     abbr --add lazyvim 'NVIM_APPNAME=lvim nvim'
     abbr --add lvim lazyvim
@@ -25,11 +29,11 @@ if command -v nvim &>/dev/null
     # abbr --add nevim 'NVIM_APPNAME=nevim nvim'
 end
 
-command -v lazydocker &>/dev/null && abbr --add ld lazydocker
-command -v lazygit &>/dev/null && abbr --add lg lazygit
-command -v python &>/dev/null && abbr --add py python
+has lazydocker && abbr --add ld lazydocker
+has lazygit && abbr --add lg lazygit
+has python && abbr --add py python
 
-if command -v bat &>/dev/null
+if has bat
     abbr --add b bat
     abbr --add ca bat
     abbr --add ba --position anywhere '| bat'
@@ -39,9 +43,7 @@ end
 abbr --add l --position anywhere '| less'
 
 set grep_cmd grep
-if command -v rg &>/dev/null
-    set grep_cmd rg
-end
+has rg && set grep_cmd rg
 
 abbr --add G --position anywhere --set-cursor "| $grep_cmd '%'"
 abbr --add gr --position anywhere --set-cursor "| $grep_cmd '%'"
