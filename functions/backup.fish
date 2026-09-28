@@ -107,22 +107,22 @@ function backup --description 'Quickly create backups of files & directories'
 
     for arg in $argv
         if set --query verbose && set --query interactive
-            log --timestamp --level INF (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
+            log --level INF (set_color -o)'-i/--interactive'(set_color --reset)' is set, file operations will require confirmation'
         end
 
         if set --query verbose
-            log --timestamp --level INF "Beginning backup of" (set_color -o yellow)$arg(set_color --reset)
+            log --level INF "Beginning backup of" (set_color -o yellow)$arg(set_color --reset)
         end
 
         # Test if $arg is a FILE or DIRECTORY - this is what we're backing up, so it 
         # must exist.
         if not test -e $arg
-            log --timestamp --level ERR "$arg does not exist"
+            log --level ERR "$arg does not exist"
             return 1
         end
 
         if set --query verbose
-            log --timestamp --level INF 'Found '(set_color -o yellow)$arg(set_color --reset)', backup can proceed'
+            log --level INF 'Found '(set_color -o yellow)$arg(set_color --reset)', backup can proceed'
         end
 
         # If user has specified -d/--dest, or -D/--mkdir, we'll take the final part of $arg (the path),
@@ -132,22 +132,22 @@ function backup --description 'Quickly create backups of files & directories'
         if set --query _flag_D
             set mkdir $_flag_D
             set dest $_flag_D
-            set --query verbose && log --timestamp --level INF (set_color -o)' -D/--mkdir'(set_color --reset)
+            set --query verbose && log --level INF (set_color -o)' -D/--mkdir'(set_color --reset)
         else if set -qf _flag_d
             set dest $_flag_d
-            set --query verbose && log --timestamp --level INF (set_color -o)' -d/--dest'(set_color --reset)
+            set --query verbose && log --level INF (set_color -o)' -d/--dest'(set_color --reset)
         end
         set --query debug && set --show dest
 
         if set --query verbose && set --query dest
-            log --timestamp --level INF "-d/--dest is set, so we'll archive "(set_color -o yellow)$arg(set_color --reset)' to '(set_color -o)"$dest/"(set_color --reset)
+            log --level INF "-d/--dest is set, so we'll archive "(set_color -o yellow)$arg(set_color --reset)' to '(set_color -o)"$dest/"(set_color --reset)
         end
 
         # If we're interactive and haven't defined dest, we'll ask the user if they want the default,
         # or another backup directory.
         if set --query interactive && not set --query dest
             while true
-                read --prompt-str (log --timestamp --level QUESTION "Choose a destination directory [Default: "(set_color -o magenta)"$PWD/"(set_color --reset)' (Enter)] ') dest
+                read --prompt-str (log --level QUESTION "Choose a destination directory [Default: "(set_color -o magenta)"$PWD/"(set_color --reset)' (Enter)] ') dest
                 switch $dest
                     case ''
                         set dest $PWD
@@ -158,13 +158,13 @@ function backup --description 'Quickly create backups of files & directories'
             end
 
             if set --query verbose
-                log --timestamp --level INF 'Destination directory set: '(set_color -o)"$dest/"(set_color --reset)
+                log --level INF 'Destination directory set: '(set_color -o)"$dest/"(set_color --reset)
             end
         end
 
         # The backup destination must be a directory, or not exist.
         if set --query dest && test -e $dest && not test -d $dest
-            log --timestamp --level ERR "Backup location must be a directory, but $dest is a file. We won't be able to create a backup directory there."
+            log --level ERR "Backup location must be a directory, but $dest is a file. We won't be able to create a backup directory there."
             return 1
         end
 
@@ -176,7 +176,7 @@ function backup --description 'Quickly create backups of files & directories'
 
         # Ask interactive users if they want the date on the end of their backup directory.
         if set --query interactive && not set --query date_dest
-            if user_confirm (log --timestamp --level QUESTION "Append date to destination directory? "(set_color -o magenta)$dest_with_date(set_color --reset))
+            if user_confirm (log --level QUESTION "Append date to destination directory? "(set_color -o magenta)$dest_with_date(set_color --reset))
                 set date_dest $_flag_a
                 set --query debug && set --show date_dest
             end
@@ -187,7 +187,7 @@ function backup --description 'Quickly create backups of files & directories'
             set dest $dest_with_date
 
             if set --query verbose
-                log --timestamp --level INF 'Destination directory updated: '(set_color -o)"$dest/"(set_color --reset)
+                log --level INF 'Destination directory updated: '(set_color -o)"$dest/"(set_color --reset)
             end
         end
 
@@ -196,19 +196,19 @@ function backup --description 'Quickly create backups of files & directories'
             # If we're interactive, ask the user before we create the directory.
             if set --query interactive
                 user_confirm --yes \
-                    (log --timestamp --level QUESTION "Create backup directory? "(set_color -o magenta)"$dest/"(set_color --reset)) \
+                    (log --level QUESTION "Create backup directory? "(set_color -o magenta)"$dest/"(set_color --reset)) \
                     || return 1
             end
 
             if set --query dest && not set --query mkdir
-                log --timestamp --level ERR "-d/--dest is set, but the directory ("$dest") doesn't exist. Pass -D/--mkdir to create it."
+                log --level ERR "-d/--dest is set, but the directory ("$dest") doesn't exist. Pass -D/--mkdir to create it."
                 return 1
             end
 
             # Proceed to creating the directory.
             if set --query dest && set --query mkdir && not set made_dir (mkdir --parents $dest)
                 # Destination is set, but we couldn't create the directory. Probably permission issue.
-                log --timestamp --level ERR 'Could not make directory: '$dest'. Do you have permission to create this directory?'
+                log --level ERR 'Could not make directory: '$dest'. Do you have permission to create this directory?'
                 return 1
             end
         end
@@ -240,7 +240,7 @@ function backup --description 'Quickly create backups of files & directories'
 
         # If we're interactive, ask the user before we backup this file/dir.
         if set --query interactive
-            user_confirm --yes (log --timestamp --level QUESTION "Create backup? "(set_color -o yellow)$new_fname(set_color --reset)) \
+            user_confirm --yes (log --level QUESTION "Create backup? "(set_color -o yellow)$new_fname(set_color --reset)) \
                 || return 1
         end
 
@@ -249,12 +249,12 @@ function backup --description 'Quickly create backups of files & directories'
 
         # It failed. :(
         if test $status -ne 0
-            log --timestamp --level ERR $arg' -> '$new_fname
+            log --level ERR $arg' -> '$new_fname
             return 1
         end
 
         if not set --query quiet
-            log --timestamp --level OK "Backup complete! "(set_color -o yellow)$arg(set_color --reset)' -> '(set_color -o)$new_fname(set_color --reset)
+            log --level OK "Backup complete! "(set_color -o yellow)$arg(set_color --reset)' -> '(set_color -o)$new_fname(set_color --reset)
         end
     end
 end
