@@ -3,7 +3,7 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __fish_utils_version '1.0.4'
+set --global __fish_utils_version '1.0.5'
 
 function has --description 'Check if system has this command, builtin or function'
     command -sq $argv || builtin -q $argv || functions -q $argv
