@@ -21,6 +21,10 @@ function backup --description 'Quickly create backups of files & directories'
 
     argparse $opts -- $argv
 
+    # Defaults
+    set default_datetime_format '.%Y%m%d_%H%M%S'
+    set default_ext bak
+
     if set --query _flag_h || not argparse --min-args=1 -- $argv &>/dev/null
         set TAB '  '
         set FLAG_DELIM ', '
@@ -45,10 +49,12 @@ function backup --description 'Quickly create backups of files & directories'
         echo (set_color --bold green)'Usage:'(set_color --reset)
         echo $TAB(_usage '[OPTIONS] [ARGS]...')
         echo $TAB(_usage '-f/--format_datetime -%s [ARGS]...')
-        echo $TAB$TAB (_desc 'Format the datetime to your liking.')
-        echo $TAB(_usage '-D/--mkdir archive -a [ARGS]...')
-        echo $TAB$TAB (_desc 'Specify a backup directory with -d/--dest, have it created automatically with -D/--makedir.')
-        echo $TAB(_usage '-s/--suffix '(printf "%s.bak" (date +'%Y-%m-%d'))' [ARGS]...')
+        echo $TAB$TAB (_desc 'Format the datetime to your liking - %s for epoch ('(date +%s)'), see man date for more'.)
+        echo $TAB(_usage '-d/--dest archive [ARGS]...')
+        echo $TAB$TAB (_desc 'Specify a backup directory with -d/--dest.')
+        echo $TAB(_usage '-D/--mkdir archive [ARGS]...')
+        echo $TAB$TAB (_desc 'Same as -d/--dest, but have it created automatically with -D/--makedir.')
+        echo $TAB(_usage "-s/--suffix '.bak' [ARGS]...")
         echo $TAB$TAB (_desc 'Completely replace the suffix, datetime and file extension with one option.')
 
         echo
@@ -62,7 +68,7 @@ function backup --description 'Quickly create backups of files & directories'
         echo $TAB(_option (string join -- $FLAG_DELIM -e --ext)' <FILE_EXTENSION>')
         echo $TAB$TAB'File extension. Default: bak.'
         echo $TAB(_option (string join -- $FLAG_DELIM -f --format_datetime)' <FORMAT>')
-        echo $TAB$TAB"Date time format to use in the backup file name. Default: $default_datetime_format."
+        echo $TAB$TAB"Date time format to use in the backup file name. Default: $default_datetime_format ("(date +$default_datetime_format)').'
         echo $TAB(_option (string join -- $FLAG_DELIM -g --debug))
         echo $TAB$TAB'Debug output, very verbose.'
         echo $TAB(_option (string join -- $FLAG_DELIM -i --interactive))
@@ -92,7 +98,7 @@ function backup --description 'Quickly create backups of files & directories'
     set --query debug && set --show debug interactive verbose quiet
 
     # Defaults
-    set default_datetime_format '_%Y%m%d_%H:%M:%S.%N'
+    set default_datetime_format '.%Y%m%d_%H%M%S'
     set default_ext bak
 
     # Set users datetime_format or default.
