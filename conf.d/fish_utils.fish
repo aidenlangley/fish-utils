@@ -3,8 +3,185 @@ if not status is-interactive && test "$CI" != true
     exit
 end
 
-set --global __fish_utils_version '0.2.0'
+set --global __fish_utils_version '1.0.0'
 
-function _utils_uninstall --on-event utils_uninstall
+abbr --erase jf
+abbr --add jf 'journalctl --output="short-precise" --no-hostname --quiet \
+  --pager-end --follow --exclude-identifier="uwsm_hyprland.desktop"'
+
+abbr --add s systemctl
+abbr --command systemctl u -- --user
+abbr --command systemctl e -- --enable
+abbr --command systemctl d -- --disable
+abbr --command systemctl r -- --restart
+abbr --command systemctl s -- --status
+abbr --command systemctl n -- --now
+
+if command -v nvim &>/dev/null
+    abbr --add nv nvim
+    # abbr --add nevim 'NVIM_APPNAME=nevim nvim'
+    # abbr --add lazyvim 'NVIM_APPNAME=lvim nvim'
+end
+
+command -v lazydocker &>/dev/null && abbr --add ld lazydocker
+command -v lazygit &>/dev/null && abbr --add lg lazygit
+command -v python &>/dev/null && abbr --add py python
+command -v bat &>/dev/null && abbr --add b --position anywhere '| bat'
+
+abbr --add l --position anywhere '| less'
+
+set grep_cmd grep
+if command -v rg &>/dev/null
+    set grep_cmd rg
+end
+
+abbr --add G --position anywhere --set-cursor "| $grep_cmd '%'"
+abbr --add gr --position anywhere --set-cursor "| $grep_cmd '%'"
+abbr --add !G --position anywhere --set-cursor "| $grep_cmd -line-buffered -v '%'"
+abbr --add !gr --position anywhere --set-cursor "| $grep_cmd -line-buffered -v '%'"
+
+abbr --add !! --position anywhere --function last_history_item
+
+# abbr --add day --position anywhere 'date +\'%d\''
+# abbr --add weekday --position anywhere 'date +\'%A\''
+# abbr --add weekdayshort --position anywhere 'date +\'%a\''
+# abbr --add week --position anywhere 'date +\'%V\''
+# abbr --add month --position anywhere 'date +\'%B\''
+# abbr --add monthshort --position anywhere 'date +\'%b\''
+# abbr --add year --position anywhere 'date +\'%G\''
+# abbr --add yday --position anywhere 'date +\'%j\''
+# abbr --add ymonth --position anywhere 'date +\'%m\''
+# abbr --add quarter --position anywhere 'date +\'%q\''
+#
+# abbr --add hour --position anywhere 'date +\'%I%p\''
+# abbr --add 24hour --position anywhere 'date +\'%H\''
+# abbr --add min --position anywhere 'date +\'%M\''
+# abbr --add sec --position anywhere 'date +\'%S\''
+# abbr --add ns --position anywhere 'date +\'%N\''
+#
+# abbr --add isodate --position anywhere --set-cursor 'date --iso-8601'
+# abbr --add rfcdate --position anywhere --set-cursor 'date --rfc-3339=date'
+# abbr --add isodth --position anywhere 'date --iso-8601=hours'
+# abbr --add isodtm --position anywhere 'date --iso-8601=minutes'
+# abbr --add isodts --position anywhere 'date --iso-8601=seconds'
+# abbr --add rfcdts --position anywhere 'date --rfc-3339=seconds'
+# abbr --add isodtns --position anywhere 'date --iso-8601=ns'
+# abbr --add rfcdtns --position anywhere 'date --rfc-3339=ns'
+# abbr --add emaildt --position anywhere 'date --rfc-email'
+#
+# abbr --add time --position anywhere 'date +\'%T\''
+# abbr --add localtime --position anywhere 'date +\'%r\''
+# abbr --add 24time --position anywhere 'date +\'%R\''
+#
+# abbr --add epoch --position anywhere 'date +\'%s\''
+#
+# abbr --add tzstr --position anywhere 'date +\'%Z\''
+# abbr --add tz --position anywhere 'date +\'%Z%z\''
+# abbr --add tzz --position anywhere 'date +\'%Z%:z\''
+# abbr --add tzzz --position anywhere 'date +\'%Z%::z\''
+# abbr --add tzzzz --position anywhere 'date +\'%Z%:::z\''
+# abbr --add tzoffset --position anywhere 'date +\'%z\''
+# abbr --add tzzoffset --position anywhere 'date +\'%:z\''
+# abbr --add tzzzoffset --position anywhere 'date +\'%::z\''
+# abbr --add tzzzzoffset --position anywhere 'date +\'%:::z\''
+#
+# abbr --add datef --position anywhere --set-cursor=^ "date +'%^'"
+# abbr --add lastmod --position anywhere --set-cursor 'date --iso-8601=date --reference=%'
+#
+# abbr --command date u -- --utc
+# abbr --command date --set-cursor d -- --date=%
+# abbr --command date D -- --debug
+# abbr --command date --set-cursor f -- --file=%
+# abbr --command date --set-cursor str -- --set=%
+
+function _fish_utils_uninstall --on-event fish_utils_uninstall
     set --erase __fish_utils_version
+
+    abbr --erase j
+    abbr --erase jf
+
+    abbr --erase s
+    abbr --command systemctl --erase d
+    abbr --command systemctl --erase e
+    abbr --command systemctl --erase n
+    abbr --command systemctl --erase r
+    abbr --command systemctl --erase s
+    abbr --command systemctl --erase u
+
+    abbr --erase nvim
+    # abbr --erase lazyvim
+    # abbr --erase nevim
+
+    abbr --erase ld
+    abbr --erase lg
+
+    abbr --erase py
+
+    abbr --erase b
+    abbr --erase l
+
+    abbr --erase G
+    abbr --erase gr
+    abbr --erase !G
+    abbr --erase !gr
+
+    functions --erase is_number
+    functions --erase last_history_item
+    functions --erase mkcd
+    functions --erase switchplugins
+    functions --erase user_confirm
+
+    abbr --erase !!
+
+    # abbr --erase day
+    # abbr --erase weekday
+    # abbr --erase weekdayshort
+    # abbr --erase week
+    # abbr --erase month
+    # abbr --erase monthshort
+    # abbr --erase year
+    # abbr --erase yday
+    # abbr --erase ymonth
+    # abbr --erase quarter
+    #
+    # abbr --erase hour
+    # abbr --erase 24hour
+    # abbr --erase min
+    # abbr --erase sec
+    # abbr --erase ns
+    #
+    # abbr --erase isodate
+    # abbr --erase rfcdate
+    # abbr --erase isodth
+    # abbr --erase isodtm
+    # abbr --erase isodts
+    # abbr --erase rfcdts
+    # abbr --erase isodtns
+    # abbr --erase rfcdtns
+    # abbr --erase emaildt
+    #
+    # abbr --erase time
+    # abbr --erase localtime
+    # abbr --erase 24time
+    #
+    # abbr --erase epoch
+    #
+    # abbr --erase tzstr
+    # abbr --erase tz
+    # abbr --erase tzz
+    # abbr --erase tzzz
+    # abbr --erase tzzzz
+    # abbr --erase tzoffset
+    # abbr --erase tzzoffset
+    # abbr --erase tzzzoffset
+    # abbr --erase tzzzzoffset
+    #
+    # abbr --erase datef
+    # abbr --erase lastmod
+    #
+    # abbr --command date --erase u
+    # abbr --command date --erase d
+    # abbr --command date --erase D
+    # abbr --command date --erase f
+    # abbr --command date --erase str
 end
