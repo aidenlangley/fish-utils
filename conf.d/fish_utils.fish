@@ -23,10 +23,8 @@ abbr --command systemctl u -- --user
 
 if has nvim
     abbr --add nv nvim
-    abbr --add lazyvim 'NVIM_APPNAME=lvim nvim'
-    abbr --add lvim lazyvim
+    alias lvim=lazyvim 'NVIM_APPNAME=lvim nvim'
     abbr --add lv lvim
-    # abbr --add nevim 'NVIM_APPNAME=nevim nvim'
 end
 
 has lazydocker && abbr --add ld lazydocker
@@ -35,9 +33,12 @@ has python && abbr --add py python
 
 if has bat
     abbr --add b bat
+    abbr --add c bat
+    abbr --add ba bat
     abbr --add ca bat
-    abbr --add ba --position anywhere '| bat'
-    abbr --add ca --position anywhere '| bat'
+
+    abbr --add B --position anywhere '| bat'
+    abbr --add C --position anywhere '| bat'
 end
 
 abbr --add l --position anywhere '| less'
